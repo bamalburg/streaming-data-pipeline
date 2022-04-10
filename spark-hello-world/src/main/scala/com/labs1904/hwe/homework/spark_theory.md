@@ -68,7 +68,7 @@ reword confusing descriptions in a way that makes sense to you.
 * It also allows for scaling the cluster of worker nodes up or down, depending on how fast you want to process data. 
 
 #### On the physical side of a spark cluster, you have a driver and executors. Define each and give an example of how they work together to process data
-* Answer: 
+* Answer: [needs better organization / clarity]
 * Driver: program that runs on a master node (or a client node, says the video? Confused). It tells other nodes (specifically, the executor programs on other nodes) what to do. 
   * It has the Spark Context on it, which is...the entry point into a Spark program (?). What does this mean, exactly?
   * Driver program interacts with the cluster manager (Apache Mesos, YARN, or spark standalone master itself...?)
@@ -86,12 +86,18 @@ reword confusing descriptions in a way that makes sense to you.
 
 #### Define each and explain how they are different from each other 
 * RDD (Resilient Distributed Dataset)
-  * Answer: immutable (can't change it), fault tolerant (can recover from errors / crashes), distributed (spread over multiple servers - this is what makes it fault tolerant?) collection of objects (data) that can be operated on in parallel.
+  * Answer: immutable (can't change it), fault tolerant (can recover from errors / crashes), distributed (spread over multiple servers - this is what makes it fault tolerant?) collection of objects/elements (data) that can be operated on in parallel.
   * An empty, in-memory (of your nodes - multiple of them) RDD is created right when a val is declared, but it is not populated with data until an action is called which needs it (lazy evaluation).
+  * structured and unstructured
+  * low level control over the data
 * DataFrame
-  * Answer: This is what Spark SQL uses to store data; it is a more structured than an RDD I think...? And it...is populated with data right away, maybe? Not sure. 
+  * Answer: distributed collection of data organized into columns
+  * structured and semi structured
+  * no compile time type safety like the other two; error detection on runtime
+  * This is what Spark SQL uses to store data; it is a more structured than an RDD I think...? And it...is populated with data right away, maybe? Not sure. 
 * DataSet
-  * Answer:
+  * Answer: combination of RDD and dataframe. Seems like the best of both worlds...?
+  * structred and unstructured
 
 #### What is a spark transformation?
 [Spark By Examples-Transformations](https://sparkbyexamples.com/apache-spark-rdd/spark-rdd-transformations/)
