@@ -33,8 +33,23 @@ reword confusing descriptions in a way that makes sense to you.
 * Helpful resource: [Spark Overview](https://www.youtube.com/watch?v=ymtq8yjmD9I) 
 * Answer: 
 * An engine (a type of software) written to quickly process lots of data (in parallel / distributed).
-* It also includes multiple modules (libraries) which aid with that - for streaming data, machine learning, interacting with graphs, etc. 
+* It also includes multiple modules (libraries?) which aid with that - for streaming data, machine learning, querying with SQL, interacting with graphs, etc. 
 * There are various languages (APIs) that work with it - Python, Scala, Java, SQL, etc. 
+* It can do batch processing and stream processing.
+* Module = component?
+* Module = group of libraries?
+* Spark Core, Spark SQL, MLib, GraphX, Spark Streaming - modules of Spark
+* Spark does not have its own storage - it needs something else for storage. Like HDFS or a database. 
+* The video said "resilient" meant that RDDs only exist for a short period of time (aka they are temporary).
+  * This may be true, but that's not what the "resilient" refers to, is it?
+* DAG: (directed acyclic graph?)
+  * series of steps which will get executed at a later stage
+  * first step in a DAG: val x = blah. This creates RDD 1 in the DAG.
+  * second step in a DAG: val y = x.map(blah). This creates RDD 2 in the DAG.
+  * When you create RDD 2, it becomes a child of RDD 1 in the DAG. 
+  * When you execute an action like y.count(blah), it triggers the execution of the DAG from the beginning - aka, data gets loading into RDD 1, then RDD 2, etc.
+  * If you execute the same action again, it will again trigger the execution of the DAG from the beginning.
+    * Is there a way to prevent this, like by caching the results from the first execution? I think so; look into this. 
 
 #### What is distributed data processing? How does it relate to Apache Spark?  
 [Apache Spark for Beginners](https://medium.com/@aristo_alex/apache-spark-for-beginners-d3b3791e259e)
@@ -45,7 +60,8 @@ reword confusing descriptions in a way that makes sense to you.
 
 #### Define each and explain how they are different from each other 
 * RDD (Resilient Distributed Dataset)
-  * Answer: immutable (can't change it), fault tolerant (can recover from errors / crashes), distributed (spread over multiple servers - this is what makes it fault tolerant?) collection of objects (data) that can be operated on in parallel
+  * Answer: immutable (can't change it), fault tolerant (can recover from errors / crashes), distributed (spread over multiple servers - this is what makes it fault tolerant?) collection of objects (data) that can be operated on in parallel.
+  * An empty, in-memory (of your nodes - multiple of them) RDD is created right when a val is declared, but it is not populated with data until an action is called which needs it (lazy evaluation).
 * DataFrame
   * Answer:
 * DataSet
@@ -53,15 +69,28 @@ reword confusing descriptions in a way that makes sense to you.
 
 #### What is a spark transformation?
 [Spark By Examples-Transformations](https://sparkbyexamples.com/apache-spark-rdd/spark-rdd-transformations/)
-* Answer: operations performed on an RDD that return a new RDD. Examples: map, filter, join, union, etc.
+* Answer: 
+* operations performed on an RDD that return a new RDD. 
+* Examples: map, filter, join, union, etc.
+* The RDD becomes part of a DAG, which is series of steps to be executed later. See above. 
 
 #### What is a spark action? How do actions differ from transformations? 
 * Answer: 
-* Operations that return a value (just one value...?) after performing a computation on an RDD. Examples: reduce, count, first, etc.
+* Operations that return a value (just one value...?) after performing a computation on an RDD. 
+* Examples: reduce, count, first, etc.
 * Different than a transformation because actions force transformations to actually happen; transformations are lazy so they don't actually happen until a value (from calling an action) is needed.
+* An action actually triggers the execution of a DAG (see above). (Just one DAG, or could it trigger the execution of multiple at once?)
 
 
 #### What is a partition in spark? Why would you ever need to repartition? 
 [Spark Partitioning](https://sparkbyexamples.com/spark/spark-repartition-vs-coalesce/)
 
 #### What was the most fascinating aspect of Spark to you while learning? 
+* DAGs, since I know a bit about these but wasn't expecting them to come up within Spark.
+* If we didn't use Spark, what could we use instead? What if we didn't "use" anything - what would that look like?
+* Contra Spark
+  * What are the downsides of Spark?
+  * It almost seems like when people are explaining Spark, it's "so obvious" that it's much better because of X, Y, Z. 
+  * If that's true, why didn't someone come up with X, Y, Z earlier on? 
+    * Were there limitations at that time which made X, Y, Z impractical, and then something changed which made them practical?
+  * What are the drawbacks of X, Y, Z (even today)? Like which kinds of use cases would Spark not be good for?
