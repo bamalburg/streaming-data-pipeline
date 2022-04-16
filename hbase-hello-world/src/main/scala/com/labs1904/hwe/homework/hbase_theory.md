@@ -71,27 +71,68 @@ Answer:
 
 Answer:
 - benefits:
+    - distributed (HDFS file storage) so it can hold lots of data (scalable)
     - query speed (optimized for reads)
-    - scalability
     - flexible data model
 - downsides:
     - worse querying...flexibility / commands? (unless you use Hive on top of it?). Otherwise you normally basically just query by row key...?
     - can't join across tables
     - doesn't support transactions
-    - requires lots of I/O, CPU, memory
-    - not optimized for writes
+    - requires lots of I/O, CPU, memory (why?)
+    - not optimized for writes (why / in what way?)
 
-#### Explain the following concepts: 
+#### Explain the following concepts:
 * Rowkey
+  * unique identifier for a single "row" I guess, but it's helpful for me to think of it as a "document" I think
 * Column Qualifier
+  * aka column name, aka column key
+  * similar to a "property key" in Cosmos DB
+  * a column is structured like "courses: math"
+    * "courses" is the column family
+    * "math" is the column qualifier
 * Column Family
+  * a group of column qualifiers (a group of columns)
+  * data in a given column family is physically stored in the same place
+    * but is this only for a single rowkey, or for multiple? 
+    * like if a user "Ben" has data in Hbase, and Ben's rowkey is 123 and one column family is "course", then I get that all the data for Ben's courses is stored in the same physical spot.
+    * But is all the data from "Mike's courses" also stored in that same place? Or is it just grouped together, but not necessarily stored near Ben's course data?
+  * "Column families must be declared up front at schema definition time whereas columns do not need to be defined at schema time but can be conjured on the fly while the table is up and running."
+* Helpful links:
+  * https://hbase.apache.org/book.html#conceptual.view
+  * https://hbase.apache.org/book.html#physical.view
+* To compare with Cosmos DB SQL API
+  * rowkey is like the id of the document
+  * column family is an object (property / group of properties) in the document
+  * column qualifier is an object (property) within another object
+  * However, unlike a single document in Cosmos DB, this data is not physically stored all together in HBase
+  * One thing that is a different - Cosmos DB SQL API can have many nested layers deep in the JSON, but HBase sort of only has two, I think? (column family and column qualifier)
+* So...it might be more similar to the Cosmos DB Gremlin API, in a way - 
+  * rowkey is like the id of a "base" node
+  * column family is like a node label
+  * column qualifier is like a property key on a node
+  * So the base node could be a "User" node with id 123 (rowkey 123)
+  * with edges to Address, Email, and Phone nodes (column families Address, Email, Phone)
+  * with properties addressLine1, addressLine2, areaCode, emailAddress (column qualifiers addressLine1, addressLine2, etc.)
+* Just like Cosmos DB, the data is not "square". 
+  * If you want to conceptually display it in a table, then it looks like a sparsely populated table
+  * but just like Cosmos, the blank spots in the "table" are not storing nulls or blank strings - they are just not there at all
+  * This is like how not every document in Cosmos (even ones of the same type) have exactly the same set of properties
+* A "namespace" is like a Cosmos DB "container" (aka "collection"), I think
 
 
 #### What are the differences between Get and Put commands in HBase? 
 * [HBase commands](https://www.tutorialspoint.com/hbase/hbase_create_data.htm)
 
+Answer:
+- 
 
 #### What is the HBase Scan command for? 
 * [HBase Scan](https://www.tutorialspoint.com/hbase/hbase_scan.htm)
 
+Answer: 
+- 
+
 #### What was the most interesting aspect of HBase when went through all the questions? 
+
+Answer:
+- similarities to Cosmos DB I guess, since I'm familiar with that
