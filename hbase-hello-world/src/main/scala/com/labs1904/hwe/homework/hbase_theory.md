@@ -124,15 +124,19 @@ Answer:
 * [HBase commands](https://www.tutorialspoint.com/hbase/hbase_create_data.htm)
 
 Answer:
-- 
+- Put is for writing data, put is for reading data [by....row key (id), set of row keys, column family(s), column(s)...anything else?]
 
 #### What is the HBase Scan command for? 
 * [HBase Scan](https://www.tutorialspoint.com/hbase/hbase_scan.htm)
 
 Answer: 
-- 
+- reading data from an entire table
 
 #### What was the most interesting aspect of HBase when went through all the questions? 
 
 Answer:
 - similarities to Cosmos DB I guess, since I'm familiar with that
+- also, if I'm right about how a "column family" and "column qualifier" is basically like "two levels deep of properties" in Cosmos DB, it's interesting to me that Hbase does this - it seems more...natural (?) to have either a limit at 1 level deep (like the Gremlin API (...ignoring metaproperties)) or an arbitrary number of levels deep (like the SQL API can do, I think). Two seems like an odd stopping point. 
+- "While retrieving data, you can get a single row by id, or get a set of rows by a set of row ids, or scan an entire table or a subset of rows."
+  - just checking - this doesn't mean that you have to know the row key no matter what, does it?
+  - like if I wanted to say "return all the data for the user(s) with name = Ben" [not knowing Ben's (or anyone else's) row key], 1) can I do this? 2) how easy or hard is it to do?
