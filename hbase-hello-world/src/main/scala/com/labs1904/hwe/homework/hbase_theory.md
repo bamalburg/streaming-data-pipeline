@@ -54,7 +54,10 @@ Answer:
     - relational database: "If you need to query that RDBMS table for a value that isn’t indexed, the table scan to locate those values will be very slow."
     - wide-column store: "Each data element can be referenced by the row key, but querying for a value is optimized like querying an index in a RDBMS, rather than a slow table scan."
   - "highly scalable because the data is stored in individual columns which can be sharded or partitioned across multiple servers."
-    - Clarification: I think data which has the same column family values are stored in the same place on disk. Similar to documents in cosmos db which have the same partition key values. 
+    - Clarification: I think data which has the same column family values are stored in the same place on disk. 
+    - Similar to documents in cosmos db which have the same partition key values? Seems like that to me, but Kit said it isn't really similar to that...hmm
+    - He said HBase sorts by key, then puts like "data with keys that starts with A-M" on server1, and "data with keys that start with N-Z" on server2. Regardless of column family. 
+    - So..what does it mean to say "stored in the same place on disk"...?
   - Use cases
     - "use cases that require a large dataset that can be distributed across multiple database nodes, especially when the columns are not always the same for every row.
       - Log data
