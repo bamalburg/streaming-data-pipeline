@@ -13,13 +13,32 @@ object MyApp {
     var connection: Connection = null
     try {
       val conf = HBaseConfiguration.create()
-      conf.set("hbase.zookeeper.quorum", "CHANGE ME")
+      conf.set("hbase.zookeeper.quorum", "hbase02.hourswith.expert")
       connection = ConnectionFactory.createConnection(conf)
       // Example code... change me
-      val table = connection.getTable(TableName.valueOf("table-name"))
-      val get = new Get(Bytes.toBytes("row-key"))
+      val table = connection.getTable(TableName.valueOf("bmalburg:users"))
+      val get = new Get(Bytes.toBytes("10000001"))
       val result = table.get(get)
-      logger.debug(result)
+
+      // Challenge 1
+      val userEmail_10000001 = Bytes.toString(result.getValue(Bytes.toBytes("f1"), Bytes.toBytes("mail")))
+      println(userEmail_10000001)
+
+      // Challenge 2
+      //      Challenge #2: Write a new user to your table with:
+      //      Rowkey: 99
+      //      username: DE-HWE
+      //      name: The Panther
+      //        sex: F
+      //      favorite_color: pink
+      //      (Note that favorite_color is a new column qualifier in this table,
+      //      and we are not specifying some other columns every other record has: DOB, email address, etc.)
+
+
+
+
+
+      //      logger.debug(result)
     } catch {
       case e: Exception => logger.error("Error in main", e)
     } finally {

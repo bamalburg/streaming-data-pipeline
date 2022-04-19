@@ -15,7 +15,7 @@ object ConnectionTest {
     try {
       logger.debug("Starting app")
       val conf = HBaseConfiguration.create()
-      conf.set("hbase.zookeeper.quorum", "CHANGEME")
+      conf.set("hbase.zookeeper.quorum", "hbase02.hourswith.expert")
       connection = ConnectionFactory.createConnection(conf)
       val table = connection.getTable(TableName.valueOf("hwe:connection_test"))
       val get = new Get(Bytes.toBytes("rowkey"))
