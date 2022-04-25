@@ -72,7 +72,7 @@ object MyApp {
       // default Result[] 	get(List<Get> gets)
       // Extracts specified cells from the given rows, as a batch.
 
-      // probably better / more succint way to write this code
+      // probably better / more succinct way to write this code
       val get1 = new Get(Bytes.toBytes("9005729"))
       val get2 = new Get(Bytes.toBytes("500600"))
       val get3 = new Get(Bytes.toBytes("30059640"))
