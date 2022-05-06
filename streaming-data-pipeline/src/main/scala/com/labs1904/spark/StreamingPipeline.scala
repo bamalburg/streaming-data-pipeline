@@ -48,13 +48,9 @@ case class EnrichedReview(
    review_date: String,
    name: String,
    username: String,
-   mail: String,
+   email: String,
    sex: String,
    birthdate: String)
-
-// may need these for later steps
-// case class User()
-// case class EnrichedUser()
 
 
 object StreamingPipeline {
@@ -65,7 +61,7 @@ object StreamingPipeline {
   val bootstrapServers = "b-2-public.hwe-kafka-cluster.l384po.c8.kafka.us-west-2.amazonaws.com:9196,b-1-public.hwe-kafka-cluster.l384po.c8.kafka.us-west-2.amazonaws.com:9196,b-3-public.hwe-kafka-cluster.l384po.c8.kafka.us-west-2.amazonaws.com:9196"
   val username = "hwe"
   val password = "1904labs"
-  val hdfsUsername = "bmalburg:users" // TODO: set this to your handle
+  val hdfsUsername = "bmalburg" // TODO: set this to your handle
 
   //Use this for Windows
   //val trustStore: String = "src\\main\\resources\\kafka.client.truststore.jks"
@@ -79,6 +75,8 @@ object StreamingPipeline {
     var connection: Connection = null
     try {
       val spark = SparkSession.builder()
+        .config("spark.hadoop.dfs.client.use.datanode.hostname", "true") // when writing to console, comment this out
+        .config("spark.hadoop.fs.defaultFS", hdfsUrl) // when writing to console, comment this out
         .config("spark.sql.shuffle.partitions", "3")
         .appName(jobName)
         .master("local[*]")
@@ -117,19 +115,14 @@ object StreamingPipeline {
           row(12), row(13), row(14)
         ))
 
-//      val query = reviews.writeStream
-//        .outputMode(OutputMode.Append())
-//        .format("console")
-//        .option("truncate", false)
-//        .trigger(Trigger.ProcessingTime("5 seconds"))
-//        .start()
-
-
-      // [START HERE]
       // Step 3
-//      Use the customer_id contained within the review message to lookup corresponding user data in HBase.
-//        Construct a HBase get request for every review message. The customer_id corresponds to a HBase rowkey.
-//        Tip: Open up a connection per partition, instead of per row
+      // Use the customer_id contained within the review message to lookup corresponding user data in HBase.
+      // Construct a HBase get request for every review message. The customer_id corresponds to a HBase rowkey.
+      // Tip: Open up a connection per partition, instead of per row
+
+      // Step 4
+      // Join the review data with the user data into a Scala case class.
+      // Create a new case class that holds information for the review data and its corresponding user data. Verify your joined data by running the application and outputting via the console sink.
 
       val customers = reviews.mapPartitions(partition => {
         val conf = HBaseConfiguration.create()
@@ -160,6 +153,7 @@ object StreamingPipeline {
       })
 
 
+      // If you wanted to write the output to console
       val query = customers.writeStream
         .outputMode(OutputMode.Append())
         .format("console")
@@ -168,19 +162,31 @@ object StreamingPipeline {
         .start()
 
 
-      // Step 4
-//      Join the review data with the user data into a Scala case class.
-//      Create a new case class that holds information for the review data and its corresponding user data. Verify your joined data by running the application and outputting via the console sink.
+        // Save this combined result in hdfs. (Write output to HDFS)
+          val query = customers.writeStream
+            .outputMode(OutputMode.Append())
+            .format("json")
+            .option("path", s"/user/${hdfsUsername}/reviews_json")
+            .option("checkpointLocation", s"/user/${hdfsUsername}/reviews_checkpoint")
+            .trigger(Trigger.ProcessingTime("5 seconds"))
+            .start()
 
 
-      // Write output to HDFS
-//      val query = result.writeStream
-//        .outputMode(OutputMode.Append())
-//        .format("json")
-//        .option("path", s"/user/${hdfsUsername}/reviews_json")
-//        .option("checkpointLocation", s"/user/${hdfsUsername}/reviews_checkpoint")
-//        .trigger(Trigger.ProcessingTime("5 seconds"))
-//        .start()
+      // check data in hdfs to make sure it looks right and has all fields
+      // why is current batch falling behind?
+      // do stretch thing in readme?
+      // create table in hue to see if I can query data that way
+      // try to create table in scala and query it that way also? [optional, per Nick]
+
+
+
+
+      //      Setup a Hive table that points to the enriched result stored in hdfs.
+      //        Create an external table
+      //        Write and run a query to verify that the data is successfully stored
+      //        ( e.g. select all usernames who gave reviews a rating of 4 or greater )
+
+
 
 
 
