@@ -167,8 +167,8 @@ object StreamingPipeline {
             .outputMode(OutputMode.Append())
             .format("csv")
             .option("delimiter","\t")
-            .option("path", s"/user/${hdfsUsername}/enriched_reviews")
-            .option("checkpointLocation", s"/user/${hdfsUsername}/enriched_reviews_checkpoint")
+            .option("path", s"/user/${hdfsUsername}/enriched_reviews3/")
+            .option("checkpointLocation", s"/user/${hdfsUsername}/enriched_reviews3_checkpoint")
             .trigger(Trigger.ProcessingTime("5 seconds"))
             .start()
 
@@ -190,6 +190,11 @@ object StreamingPipeline {
       // It worked, but only after I deleted the _spark_metadata folder that
       // was somehow [wrongly] created as part of the process of writing data to hdfs [per Nick: bug on their end..?]
       // I can try to fix this though [see his email and some discord messages]
+      // Some options: avoid creating it; delete or move it after creation; ignore it when creating hive table
+      // Potentially related links below
+      // https://issues.apache.org/jira/browse/SPARK-18227
+      // https://github.com/apache/spark/blob/4ef39c2f4436fa22d0b957fe7ad477e4c4a16452/sql/core/src/main/scala/org/apache/spark/sql/execution/datasources/PartitioningAwareFileCatalog.scala#L406-L413
+
 
 
 
