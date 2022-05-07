@@ -75,8 +75,8 @@ object StreamingPipeline {
     var connection: Connection = null
     try {
       val spark = SparkSession.builder()
-//        .config("spark.hadoop.dfs.client.use.datanode.hostname", "true") // when writing to console, comment this out
-//        .config("spark.hadoop.fs.defaultFS", hdfsUrl) // when writing to console, comment this out
+        .config("spark.hadoop.dfs.client.use.datanode.hostname", "true") // when writing to console, comment this out
+        .config("spark.hadoop.fs.defaultFS", hdfsUrl) // when writing to console, comment this out
         .config("spark.sql.shuffle.partitions", "3")
         .appName(jobName)
         .master("local[*]")
@@ -126,13 +126,13 @@ object StreamingPipeline {
 
       val customers = reviews.mapPartitions(partition => {
         val conf = HBaseConfiguration.create()
-        conf.set("hbase.zookeeper.quorum", "hbase02.hourswith.expert:2181")
+        conf.set("hbase.zookeeper.quorum", "hbase02.hourswith.expert")
         val connection = ConnectionFactory.createConnection(conf)
         val table = connection.getTable(TableName.valueOf("bmalburg:users"))
 
         val iter = partition.map(row => {
 
-          val customerToGet = new Get(Bytes.toBytes(row.customer_id)).addFamily(Bytes.toBytes("f1"))
+          val customerToGet = new Get(Bytes.toBytes(row.customer_id.toString)).addFamily(Bytes.toBytes("f1")) // notice the "toString" here
           val customer = table.get(customerToGet)
 
           val name = Bytes.toString(customer.getValue(Bytes.toBytes("f1"), Bytes.toBytes("name")))
@@ -154,37 +154,78 @@ object StreamingPipeline {
 
 
       // If you wanted to write the output to console
-      val query = customers.writeStream
-        .outputMode(OutputMode.Append())
-        .format("console")
-        .option("truncate", false)
-        .trigger(Trigger.ProcessingTime("5 seconds"))
-        .start()
+//      val query = customers.writeStream
+//        .outputMode(OutputMode.Append())
+//        .format("console")
+//        .option("truncate", false)
+//        .trigger(Trigger.ProcessingTime("5 seconds"))
+//        .start()
 
 
         // Save this combined result in hdfs. (Write output to HDFS)
-//          val query = customers.writeStream
-//            .outputMode(OutputMode.Append())
-//            .format("json")
-//            .option("path", s"/user/${hdfsUsername}/reviews_json")
-//            .option("checkpointLocation", s"/user/${hdfsUsername}/reviews_checkpoint")
-//            .trigger(Trigger.ProcessingTime("5 seconds"))
-//            .start()
+          val query = customers.writeStream
+            .outputMode(OutputMode.Append())
+            .format("csv")
+            .option("delimiter","\t")
+            .option("path", s"/user/${hdfsUsername}/enriched_reviews")
+            .option("checkpointLocation", s"/user/${hdfsUsername}/enriched_reviews_checkpoint")
+            .trigger(Trigger.ProcessingTime("5 seconds"))
+            .start()
+
+// To Do
+      // _spark_metadata bug - find fix/workaround?
+      // why is current batch falling behind? (something related to trigger maybe?)
+      // do stretch thing in readme? (filtering out junk data)
+      // see notes from last week / previous weeks - any catch up needed?
+      // finish lab from week 7...? [optional]
 
 
-      // check data in hdfs to make sure it looks right and has all fields
-      // why is current batch falling behind?
-      // do stretch thing in readme?
-      // create table in hue to see if I can query data that way
-      // try to create table in scala and query it that way also? [optional, per Nick]
 
-
-
-
+// Step 5.i - Hive query [instructions from Readme below]
       //      Setup a Hive table that points to the enriched result stored in hdfs.
       //        Create an external table
       //        Write and run a query to verify that the data is successfully stored
       //        ( e.g. select all usernames who gave reviews a rating of 4 or greater )
+      // I created a Hive table with a query in Hue just to confirm I could.
+      // It worked, but only after I deleted the _spark_metadata folder that
+      // was somehow [wrongly] created as part of the process of writing data to hdfs [per Nick: bug on their end..?]
+      // I can try to fix this though [see his email and some discord messages]
+
+
+
+//      create external table if not exists enriched_user (
+//        marketplace	string,
+//        customer_id string,
+//        review_id	string,
+//        product_id string,
+//        product_parent string,
+//        product_title string,
+//        product_category string,
+//        star_rating	string,
+//        helpful_votes	string,
+//        total_votes	string,
+//        vine string,
+//        verified_purchase string,
+//        review_headline	string,
+//        review_body	string,
+//        review_date string,
+//        name string,
+//        username string,
+//        email string,
+//        sex string,
+//        birthdate string
+//      )
+//
+//      row format
+//        delimited
+//      fields terminated by '\t'
+//      escaped by '\\'
+//      lines terminated by '\n'
+//      stored as textfile
+//      location '/user/bmalburg/enriched_reviews/'
+
+
+
 
 
 
