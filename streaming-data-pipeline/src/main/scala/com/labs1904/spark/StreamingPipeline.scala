@@ -153,7 +153,8 @@ object StreamingPipeline {
       })
 
 
-      // If you wanted to write the output to console
+      // If you wanted to write the output to console, use this
+      // Note a couple lines near beginning that should also be commented out if writing to console
 //      val query = customers.writeStream
 //        .outputMode(OutputMode.Append())
 //        .format("console")
@@ -167,8 +168,8 @@ object StreamingPipeline {
             .outputMode(OutputMode.Append())
             .format("csv")
             .option("delimiter","\t")
-            .option("path", s"/user/${hdfsUsername}/enriched_reviews3/")
-            .option("checkpointLocation", s"/user/${hdfsUsername}/enriched_reviews3_checkpoint")
+            .option("path", s"/user/${hdfsUsername}/enriched_reviews/")
+            .option("checkpointLocation", s"/user/${hdfsUsername}/enriched_reviews_checkpoint")
             .trigger(Trigger.ProcessingTime("5 seconds"))
             .start()
 
