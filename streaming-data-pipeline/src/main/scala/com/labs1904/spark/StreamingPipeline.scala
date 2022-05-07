@@ -75,8 +75,8 @@ object StreamingPipeline {
     var connection: Connection = null
     try {
       val spark = SparkSession.builder()
-        .config("spark.hadoop.dfs.client.use.datanode.hostname", "true") // when writing to console, comment this out
-        .config("spark.hadoop.fs.defaultFS", hdfsUrl) // when writing to console, comment this out
+//        .config("spark.hadoop.dfs.client.use.datanode.hostname", "true") // when writing to console, comment this out
+//        .config("spark.hadoop.fs.defaultFS", hdfsUrl) // when writing to console, comment this out
         .config("spark.sql.shuffle.partitions", "3")
         .appName(jobName)
         .master("local[*]")
@@ -163,13 +163,13 @@ object StreamingPipeline {
 
 
         // Save this combined result in hdfs. (Write output to HDFS)
-          val query = customers.writeStream
-            .outputMode(OutputMode.Append())
-            .format("json")
-            .option("path", s"/user/${hdfsUsername}/reviews_json")
-            .option("checkpointLocation", s"/user/${hdfsUsername}/reviews_checkpoint")
-            .trigger(Trigger.ProcessingTime("5 seconds"))
-            .start()
+//          val query = customers.writeStream
+//            .outputMode(OutputMode.Append())
+//            .format("json")
+//            .option("path", s"/user/${hdfsUsername}/reviews_json")
+//            .option("checkpointLocation", s"/user/${hdfsUsername}/reviews_checkpoint")
+//            .trigger(Trigger.ProcessingTime("5 seconds"))
+//            .start()
 
 
       // check data in hdfs to make sure it looks right and has all fields
