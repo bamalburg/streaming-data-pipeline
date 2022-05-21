@@ -176,9 +176,6 @@ object StreamingPipeline {
 // To Do
       // _spark_metadata bug - find fix/workaround?
       // why is current batch falling behind? (something related to trigger maybe?)
-      // do stretch thing in readme? (filtering out junk data)
-      // see notes from last week / previous weeks - any catch up needed?
-      // finish lab from week 7...? [optional]
 
 
 
